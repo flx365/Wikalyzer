@@ -1,62 +1,34 @@
-## ─── Build- und Ausgabeordner ─────────────────────────────
+# ───── .NET / MSBuild ───────────────────────────────
 bin/
 obj/
-out/
-artifacts/
+*.user
+*.suo
+*.userprefs
+*.csproj.FileListAbsolute.txt
+*.cache
+*.log
 
-## ─── NuGet / Pakete ───────────────────────────────────────
+# Rider / ReSharper
+.idea/
+*.DotSettings.user
+.ReSharper*/        # alte ReSharper-Ordner
+
+# Visual Studio Code (falls du mal öffnest)
+.vscode/
+
+# Avalonia Designer-Artefakte
+**/*.axaml.cs.bin
+**/*.g.cs
+**/*.g.i.cs
+**/*.axaml.g.cs
+
+# Paket-Manager / NuGet
 packages/
 *.nupkg
-*.snupkg
-*.nuspec
 project.lock.json
 project.assets.json
 
-## ─── IDE- und Tooling-Dateien ─────────────────────────────
-# JetBrains Rider / ReSharper
-.idea/
-.idea/**/
-.idea.modules.xml
-.idea.Workspace.xml
-.idea.*.xml
-.ReSharper*/            # ReSharper-Caches
-*_Resharper*/           # VS + ReSharper-Cache
-.DotSettings.user       # Rider-User-Settings
-*.DotSettings.user
-
-# Visual Studio / VS Code
-.vs/
-.vscode/
-*.suo
-*.user
-*.userosscache
-*.sln.docstates
-
-# dotCover / dotTrace
-.dotCover
-.dotCover/**
-
-# NCrunch
-.ncrunch*/              # nur falls NCrunch installiert ist
-
-## ─── Avalonia Designer Cache ──────────────────────────────
-*.axaml.cs
-.axaml.cache/
-
-## ─── Test- und Analyse-Artefakte ──────────────────────────
-TestResults/
-*.trx
-*.coverage*
-*.log
-
-## ─── Betriebssystem-Noise ─────────────────────────────────
-.DS_Store
-Thumbs.db
-ehthumbs.db
-
-## ─── Temporäre/Backup-Dateien ─────────────────────────────
-*.tmp
-*.bak
-*.swp
-*.orig
-*.rej
+# OS-Typisches
+.DS_Store          # macOS
+Thumbs.db          # Windows
+desktop.ini
