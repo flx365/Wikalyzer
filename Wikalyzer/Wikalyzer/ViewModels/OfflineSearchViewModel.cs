@@ -14,37 +14,45 @@ public partial class OfflineSearchViewModel : ViewModelBase
 {
     private readonly TextAnalyzer _analyzer = new();
 
-    /// <summary>Suchbegriff (optional).</summary>
+    // ───────── Properties ─────────
+
     [ObservableProperty]
     private string? _searchTerm;
 
-    /// <summary>Vollständiger Eingabetext.</summary>
     [ObservableProperty]
     private string? _inputText;
 
-    /// <summary>Analyse-Ergebnis (Statistiken).</summary>
+    // Nie null → zeigt standardmäßig 0 in allen Feldern
     [ObservableProperty]
-    private TextStats? _stats;
+    private TextStats _stats = new TextStats();
 
-    /// <summary>Führt die Analyse asynchron aus.</summary>
+    [ObservableProperty]
+    private bool _isAnalyzing;
+
+    // ───────── Command ────────────
+
+    /// <summary>Führt die Analyse aus und zeigt den Lade­indikator.</summary>
     [RelayCommand(CanExecute = nameof(CanAnalyze))]
     private async Task AnalyzeAsync()
     {
-        if (string.IsNullOrWhiteSpace(InputText))
-            return;
+        // Ladeindikator einschalten
+        IsAnalyzing = true;
 
-        // Analyse im Hintergrund
-        var result = await Task.Run(() => _analyzer.Analyze(InputText!));
+        // Hintergrund-Analyse
+        var result = await Task.Run(() => _analyzer.Analyze(InputText ?? string.Empty));
 
-        // Ergebnis auf UI-Thread setzen
+        // Ergebnis setzen (UI-Thread)
         await Dispatcher.UIThread.InvokeAsync(() => Stats = result);
+
+        // Ladeindikator ausschalten
+        IsAnalyzing = false;
     }
 
-    /// <summary>Prüft, ob Analyse-Befehl ausgeführt werden darf.</summary>
+    /// <summary>Button nur aktiv, wenn Text eingegeben.</summary>
     private bool CanAnalyze() =>
         !string.IsNullOrWhiteSpace(InputText);
 
-    /// <summary>Wird nach Änderung von InputText ausgeführt.</summary>
-    partial void OnInputTextChanged(string? value) =>
+    // Re-evaluate Command, sobald sich InputText ändert
+    partial void OnInputTextChanged(string? _) =>
         AnalyzeCommand.NotifyCanExecuteChanged();
 }
