@@ -15,31 +15,37 @@
         <vm:MainWindowViewModel/>
     </Design.DataContext>
     
-    <StackPanel Margin="20" Spacing="12">
-        <TextBlock Text="Wikipedia-Text hier einfügen:" />
-        <TextBox AcceptsReturn="True"
-                 MinHeight="120"
-                 Text="{Binding InputText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-
-        <Button Content="Analysieren"
-                Command="{Binding AnalyzeCommand}" />
-
-        <!-- Ergebnisanzeige -->
-        <StackPanel Orientation="Vertical" Margin="0,20,0,0" Spacing="4">
-            <TextBlock Text="Ergebnisse:" FontWeight="Bold"/>
-
-            <TextBlock Text="{Binding Stats.WordCount,
-                                  StringFormat='Wörter: {0}'}"/>
-            <TextBlock Text="{Binding Stats.SentenceCount,
-                                  StringFormat='Sätze: {0}'}"/>
-            <TextBlock Text="{Binding Stats.AvgWordLength,
-                                  StringFormat='Ø Wortlänge: {0:F2}'}"/>
-            <TextBlock Text="{Binding Stats.AvgSentenceLength,
-                                  StringFormat='Ø Satzlänge: {0:F2}'}"/>
-            <TextBlock Text="{Binding Stats.WordDiversity,
-                                  StringFormat='Wortvielfalt: {0:P1}'}"/>
-        </StackPanel>
-    </StackPanel>
-
+    <SplitView IsPaneOpen="{Binding IsPaneOpen}"
+               OpenPaneLength="300"
+               CompactPaneLength="50"
+               DisplayMode="CompactInline"
+               Background="#735A21"
+               PaneBackground="#735A21">
+        <SplitView.Pane>
+            <StackPanel Spacing="5"
+                        Margin="5">
+                <Button Command ="{Binding TriggerPaneCommand}">
+                    <PathIcon Data="{StaticResource LineHorizontal3Regular}"></PathIcon>
+                </Button>
+                <ListBox ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedListItem }" Background="#735A21">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate DataType="{x:Type vm:ListItemTemplate}">
+                            <StackPanel Spacing="15" Orientation="Horizontal">
+                                <PathIcon Data="{Binding ListItemIcon}"></PathIcon>
+                                <TextBlock Text = "{Binding Label}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </StackPanel>
+        </SplitView.Pane>
+         
+        <SplitView.Content>
+            <Border CornerRadius="12 0 0 12"
+                    Background="#69795c">
+                <TransitioningContentControl Content="{Binding CurrentPage }"></TransitioningContentControl>
+            </Border>
+        </SplitView.Content>
+    </SplitView>   
 
 </Window>
