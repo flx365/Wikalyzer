@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media;
@@ -39,7 +38,7 @@ public partial class MainWindowViewModel : ViewModelBase
     [RelayCommand]
     private void TriggerPane()
     {
-        IsPaneOpen = !_isPaneOpen;
+        IsPaneOpen = !IsPaneOpen;
     }
 }
 
