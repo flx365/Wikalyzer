@@ -1,51 +1,65 @@
-﻿using ReactiveUI;
-using Avalonia.ReactiveUI;
-using System.Reactive;
-using System.Reactive.Linq;
-using System.Threading.Tasks;
-using Avalonia.Threading;
-using Wikalyzer.Services;
-using Wikalyzer.Models;
+﻿using System;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Media;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 
 namespace Wikalyzer.ViewModels;
 
-public partial class MainWindowViewModel : ReactiveObject
+public partial class MainWindowViewModel : ViewModelBase
 {
-    private readonly TextAnalyzer _analyzer = new();
-    private string? _searchTerm;
-
-    public string? SearchTerm
-    {
-        get => _searchTerm;
-        set => this.RaiseAndSetIfChanged(ref _searchTerm, value);
-    }
+    [ObservableProperty] 
+    private bool _isPaneOpen = true;
     
-    private string? _inputText;
-    public string? InputText
+    [ObservableProperty]
+    private ViewModelBase _currentPage = new HomePageViewModel();
+
+    [ObservableProperty] 
+    private ListItemTemplate? _selectedListItem;
+
+    partial void OnSelectedListItemChanged(ListItemTemplate? value)
     {
-        get => _inputText;
-        set => this.RaiseAndSetIfChanged(ref _inputText, value);
+        if (value is null) return;
+        var instance = Activator.CreateInstance(value.ModelType);
+        if (instance is null) return;
+        CurrentPage = (ViewModelBase)instance;
     }
+
+    public ObservableCollection<ListItemTemplate> Items { get; } = new()
+    {
+        new ListItemTemplate(typeof(HomePageViewModel), "HomeRegular"),
+        new ListItemTemplate(typeof(OnlineSearchViewModel), "GlobeSearchRegular"),
+        new ListItemTemplate(typeof(OfflineSearchViewModel), "DocumentSearchRegular"),
+       
+    };
+
+    [RelayCommand]
+    private void TriggerPane()
+    {
+        IsPaneOpen = !_isPaneOpen;
+    }
+}
+
+public class ListItemTemplate
+{
+    public ListItemTemplate(Type type, string iconKey)
+    {
+        ModelType = type;
+        Label = type.Name.Replace("PageViewModel", "")
+            .Replace("ViewModel", "")
+            .Replace("Search", "")
+            .Replace("Home", "Dashboard")
+            .Replace("Online", "Online - Suche")
+            .Replace("Offline", "Text analysieren");
+        
+        Application.Current!.TryFindResource(iconKey, out var res);
+        ListItemIcon = (StreamGeometry)res!;
+    }
+    public string Label { get; }
+    public Type ModelType { get; }
     
-    private TextStats? _stats;
-
-    public TextStats? Stats
-    {
-        get => _stats;
-        set => this.RaiseAndSetIfChanged(ref _stats, value);
-    }
-    
-    public ReactiveCommand<Unit, Unit> AnalyzeCommand { get; }
-
-    public MainWindowViewModel()
-    {
-        var canExecute = this.WhenAnyValue(x => x.InputText, input => !string.IsNullOrWhiteSpace(input))
-                             .ObserveOn(RxApp.MainThreadScheduler);
-
-        AnalyzeCommand = ReactiveCommand.CreateFromTask(async () =>
-        {
-            var result = await Task.Run(() => _analyzer.Analyze(InputText!));
-            await Dispatcher.UIThread.InvokeAsync(() => Stats = result);
-        }, canExecute);
-    }
+    public StreamGeometry ListItemIcon { get; }
 }

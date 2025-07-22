@@ -1,0 +1,142 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:Wikalyzer.ViewModels"
+             mc:Ignorable="d"
+             d:DesignWidth="800"
+             d:DesignHeight="600"
+             x:Class="Wikalyzer.Views.OfflineSearchView"
+             x:DataType="vm:OfflineSearchViewModel">
+
+  <!-- Ermöglicht Scrollen des gesamten Inhalts bei sehr langem Ergebnis -->
+  <ScrollViewer VerticalScrollBarVisibility="Auto"
+                Background="#F9F9F9"
+                Padding="20">
+
+    <!-- Grid für feste Platzaufteilung -->
+    <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto"
+          RowSpacing="16">
+
+      <!-- Zeile 0: Überschrift -->
+      <TextBlock Grid.Row="0"
+                 Text="Wikipedia-Text eingeben:"
+                 FontSize="18"
+                 FontWeight="Bold"
+                 Foreground="#222222"/>
+
+      <!-- Zeile 1: Eingabe-TextBox, Maximalhöhe 200px, intern scrollbar -->
+      <TextBox Grid.Row="1"
+               AcceptsReturn="True"
+               AcceptsTab="True"
+               Text="{Binding InputText, Mode=TwoWay}"
+               Background="White"
+               Foreground="#111111"
+               Padding="8"
+               BorderBrush="#CCCCCC"
+               MaxHeight="200"
+               ScrollViewer.VerticalScrollBarVisibility="Auto"
+               ScrollViewer.HorizontalScrollBarVisibility="Auto"/>
+
+      <!-- Zeile 2: Analyse-Button -->
+      <Button Grid.Row="2"
+              Content="Analysieren"
+              Command="{Binding AnalyzeCommand}"
+              Background="#0066CC"
+              Foreground="White"
+              FontWeight="SemiBold"
+              Padding="12,8"
+              CornerRadius="4"/>
+
+      <!-- Zeile 3: Ladeindikator -->
+      <StackPanel Grid.Row="3" Spacing="4">
+        <ProgressBar IsVisible="{Binding IsAnalyzing}"
+                     IsIndeterminate="True"
+                     Height="4"
+                     Foreground="#0066CC"/>
+        <TextBlock Text="Analyse läuft…"
+                   IsVisible="{Binding IsAnalyzing}"
+                   FontStyle="Italic"
+                   Foreground="#0066CC"
+                   HorizontalAlignment="Center"/>
+      </StackPanel>
+
+      <!-- Zeile 4: Ergebnis-Panel -->
+    <Border Grid.Row="4"
+        Background="White"
+        CornerRadius="6"
+        Padding="16"
+        BorderBrush="#DDDDDD"
+        BorderThickness="1">
+  <StackPanel Spacing="8">
+    <TextBlock Text="Ergebnisse:"
+               FontSize="16"
+               FontWeight="SemiBold"
+               Foreground="#222222"/>
+
+    <!-- Wörter -->
+    <StackPanel Orientation="Horizontal" Spacing="4">
+      <TextBlock Text="{Binding Stats.WordCount, StringFormat=Wörter: {0}}"/>
+      <TextBlock Text="ᐩ" FontSize="14" Foreground="#0078D7">
+        <ToolTip.Tip>
+          <ToolTip>
+            <TextBlock Text="Anzahl aller Wörter im eingegebenen Text"/>
+          </ToolTip>
+        </ToolTip.Tip>
+      </TextBlock>
+    </StackPanel>
+
+    <!-- Sätze -->
+    <StackPanel Orientation="Horizontal" Spacing="4">
+      <TextBlock Text="{Binding Stats.SentenceCount, StringFormat=Sätze: {0}}"/>
+      <TextBlock Text="ᐩ" FontSize="14" Foreground="#0078D7">
+        <ToolTip.Tip>
+          <ToolTip>
+            <TextBlock Text="Anzahl der Sätze, erkannt an ., ! oder ?"/>
+          </ToolTip>
+        </ToolTip.Tip>
+      </TextBlock>
+    </StackPanel>
+
+    <!-- Ø Wortlänge -->
+    <StackPanel Orientation="Horizontal" Spacing="4">
+      <TextBlock Text="{Binding Stats.AvgWordLength, StringFormat=Ø Wortlänge: {0:F2}}"/>
+      <TextBlock Text="ᐩ" FontSize="14" Foreground="#0078D7">
+        <ToolTip.Tip>
+          <ToolTip>
+            <TextBlock Text="Durchschnittliche Länge aller Wörter in Zeichen"/>
+          </ToolTip>
+        </ToolTip.Tip>
+      </TextBlock>
+    </StackPanel>
+
+    <!-- Ø Satzlänge -->
+    <StackPanel Orientation="Horizontal" Spacing="4">
+      <TextBlock Text="{Binding Stats.AvgSentenceLength, StringFormat=Ø Satzlänge: {0:F2}}"/>
+      <TextBlock Text="ᐩ" FontSize="14" Foreground="#0078D7">
+        <ToolTip.Tip>
+          <ToolTip>
+            <TextBlock Text="Durchschnittliche Wortanzahl pro Satz"/>
+          </ToolTip>
+        </ToolTip.Tip>
+      </TextBlock>
+    </StackPanel>
+
+    <!-- Wortvielfalt -->
+    <StackPanel Orientation="Horizontal" Spacing="4">
+      <TextBlock Text="{Binding Stats.WordDiversity, StringFormat=Wortvielfalt: {0:P1}}"/>
+      <TextBlock Text="ᐩ" FontSize="14" Foreground="#0078D7">
+        <ToolTip.Tip>
+          <ToolTip>
+            <TextBlock Text="Anteil eindeutiger Wörter am Gesamtwortvorrat"/>
+          </ToolTip>
+        </ToolTip.Tip>
+      </TextBlock>
+    </StackPanel>
+
+  </StackPanel>
+</Border>
+
+    </Grid>
+  </ScrollViewer>
+</UserControl>
