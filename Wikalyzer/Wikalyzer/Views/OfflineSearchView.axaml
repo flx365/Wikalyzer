@@ -1,0 +1,200 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:Wikalyzer.ViewModels"
+             mc:Ignorable="d"
+             d:DesignWidth="1000"
+             d:DesignHeight="600"
+             x:Class="Wikalyzer.Views.OfflineSearchView"
+             x:DataType="vm:OfflineSearchViewModel">
+
+  <Border Padding="20" Background="#1A2D3A">
+    <Grid ColumnDefinitions="3*,2*" RowDefinitions="Auto" ColumnSpacing="20">
+
+
+    <!-- Linke Spalte: Text + Analyse -->
+    <StackPanel Grid.Column="0" Spacing="12">
+
+      <TextBlock Text="Wikipedia-Text eingeben:"
+                 FontSize="18"
+                 FontWeight="Bold"
+                 Foreground="White"/>
+
+      <TextBox AcceptsReturn="True"
+               AcceptsTab="True"
+               TextWrapping="Wrap"
+               Text="{Binding InputText, Mode=TwoWay}"
+               Background="White"
+               Foreground="#111111"
+               Padding="8"
+               BorderBrush="#CCCCCC"
+               Height="300"
+               ScrollViewer.VerticalScrollBarVisibility="Auto"/>
+
+      <Button Content="Analysieren"
+              Command="{Binding AnalyzeCommand}">
+        <Button.Styles>
+          <Style Selector="Button">
+            <Setter Property="Background" Value="#4FC3F7"/>
+            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+          </Style>
+
+          <!-- Hover -->
+          <Style Selector="Button:pointerover">
+            <Setter Property="Background" Value="#03A9F4"/>
+          </Style>
+
+          <!-- Pressed -->
+          <Style Selector="Button:pressed">
+            <Setter Property="Background" Value="#039BE5"/>
+          </Style>
+        </Button.Styles>
+      </Button>
+
+
+
+      <StackPanel Spacing="4">
+        <ProgressBar IsVisible="{Binding IsAnalyzing}"
+                     IsIndeterminate="True"
+                     Height="4"
+                     Foreground="#0066CC"/>
+        <TextBlock Text="Analyse läuft…"
+                   IsVisible="{Binding IsAnalyzing}"
+                   FontStyle="Italic"
+                   Foreground="#0066CC"
+                   HorizontalAlignment="Center"/>
+      </StackPanel>
+
+    </StackPanel>
+
+    <!-- Rechte Spalte: Ergebnisse -->
+    <Border Grid.Column="1"
+            Background="White"
+            CornerRadius="6"
+            Padding="16"
+            BorderBrush="Transparent"
+            BorderThickness="1"
+            MaxHeight="1000">
+
+      <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Spacing="8">
+          <TextBlock Text="Ergebnisse:"
+                     FontSize="16"
+                     FontWeight="SemiBold"
+                     Foreground="#222222"/>
+
+          <!-- Wörter -->
+          <StackPanel Orientation="Horizontal" Spacing="4">
+            <TextBlock Text="{Binding Stats.WordCount, StringFormat=Wörter: {0}}"/>
+            <TextBlock Text="ᐩ" FontSize="14" Foreground="#0078D7">
+              <ToolTip.Tip>
+                <ToolTip>
+                  <TextBlock Text="Anzahl aller Wörter im eingegebenen Text"/>
+                </ToolTip>
+              </ToolTip.Tip>
+            </TextBlock>
+          </StackPanel>
+
+          <!-- Sätze -->
+          <StackPanel Orientation="Horizontal" Spacing="4">
+            <TextBlock Text="{Binding Stats.SentenceCount, StringFormat=Sätze: {0}}"/>
+            <TextBlock Text="ᐩ" FontSize="14" Foreground="#0078D7">
+              <ToolTip.Tip>
+                <ToolTip>
+                  <TextBlock Text="Anzahl der Sätze, erkannt an ., ! oder ?"/>
+                </ToolTip>
+              </ToolTip.Tip>
+            </TextBlock>
+          </StackPanel>
+
+          <!-- Ø Wortlänge -->
+          <StackPanel Orientation="Horizontal" Spacing="4">
+            <TextBlock Text="{Binding Stats.AverageWordLength, StringFormat=Ø Wortlänge: {0:F2}}"/>
+            <TextBlock Text="ᐩ" FontSize="14" Foreground="#0078D7">
+              <ToolTip.Tip>
+                <ToolTip>
+                  <TextBlock Text="Durchschnittliche Länge aller Wörter in Zeichen"/>
+                </ToolTip>
+              </ToolTip.Tip>
+            </TextBlock>
+          </StackPanel>
+
+          <!-- Ø Satzlänge -->
+          <StackPanel Orientation="Horizontal" Spacing="4">
+            <TextBlock Text="{Binding Stats.AverageSentenceLength, StringFormat=Ø Satzlänge: {0:F2}}"/>
+            <TextBlock Text="ᐩ" FontSize="14" Foreground="#0078D7">
+              <ToolTip.Tip>
+                <ToolTip>
+                  <TextBlock Text="Durchschnittliche Wortanzahl pro Satz"/>
+                </ToolTip>
+              </ToolTip.Tip>
+            </TextBlock>
+          </StackPanel>
+
+          <!-- Wortvielfalt -->
+          <StackPanel Orientation="Horizontal" Spacing="4">
+            <TextBlock Text="{Binding Stats.LexicalDiversity, StringFormat=Wortvielfalt: {0:P1}}"/>
+            <TextBlock Text="ᐩ" FontSize="14" Foreground="#0078D7">
+              <ToolTip.Tip>
+                <ToolTip>
+                  <TextBlock Text="Anteil eindeutiger Wörter am Gesamtwortvorrat"/>
+                </ToolTip>
+              </ToolTip.Tip>
+            </TextBlock>
+          </StackPanel>
+
+          <!-- Lesedauer -->
+          <StackPanel Orientation="Horizontal" Spacing="4">
+            <TextBlock Text="{Binding Stats.ReadingTimeMinutes, StringFormat=Lesedauer: {0:F2} min}"/>
+            <TextBlock Text="ᐩ" FontSize="14" Foreground="#0078D7">
+              <ToolTip.Tip>
+                <ToolTip>
+                  <TextBlock Text="Geschätzte Lesezeit bei 200 Wörtern pro Minute"/>
+                </ToolTip>
+              </ToolTip.Tip>
+            </TextBlock>
+          </StackPanel>
+
+          <!-- Flesch-Wert -->
+          <StackPanel Orientation="Horizontal" Spacing="4">
+            <TextBlock Text="{Binding Stats.FleschReadingEase, StringFormat=Flesch-Wert: {0:F1}}"/>
+            <TextBlock Text="ᐩ" FontSize="14" Foreground="#0078D7">
+              <ToolTip.Tip>
+                <ToolTip>
+                  <TextBlock Text="Lesbarkeitsindex: höher = leichter zu lesen (Deutsch: bis 100)"/>
+                </ToolTip>
+              </ToolTip.Tip>
+            </TextBlock>
+          </StackPanel>
+
+          <!-- Kürzester Satz -->
+          <TextBlock Text="Kürzester Satz:" FontWeight="Bold" Margin="0,10,0,0"/>
+          <TextBlock Text="{Binding Stats.ShortestSentence}" TextWrapping="Wrap" Foreground="#444"/>
+
+          <!-- Längster Satz -->
+          <TextBlock Text="Längster Satz:" FontWeight="Bold" Margin="0,10,0,0"/>
+          <TextBlock Text="{Binding Stats.LongestSentence}" TextWrapping="Wrap" Foreground="#444"/>
+
+          <!-- Top-Wörter -->
+          <TextBlock Text="Top-Wörter:" FontWeight="Bold" Margin="0,10,0,0"/>
+          <ItemsControl ItemsSource="{Binding Stats.TopWords}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <TextBlock Text="{Binding}" Foreground="#333"/>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+
+        </StackPanel>
+      </ScrollViewer>
+
+    </Border>
+
+  </Grid></Border>
+</UserControl>

@@ -1,0 +1,115 @@
+<!-- Views/HomePageView.axaml -->
+<UserControl
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="clr-namespace:Wikalyzer.ViewModels"
+    xmlns:oxy="clr-namespace:OxyPlot.Avalonia;assembly=OxyPlot.Avalonia"
+    mc:Ignorable="d"
+    d:DesignWidth="800" d:DesignHeight="600"
+    x:Class="Wikalyzer.Views.HomePageView"
+    x:DataType="vm:HomePageViewModel">
+
+  <!-- Design‑Datenkontext für die Vorschau im Designer -->
+  <Design.DataContext>
+    <vm:HomePageViewModel/>
+  </Design.DataContext>
+
+  <!-- Außenabstand + blauer Hintergrund -->
+  <Border Padding="20" Background="#1E2d3a">
+    <StackPanel Spacing="20">
+
+      <!-- Dashboard-Titel -->
+      <TextBlock Text="Dashboard"
+                 FontSize="24"
+                 FontWeight="Bold"
+                 Foreground="White"/>
+
+      <!-- KPI‑Cards -->
+      <Grid ColumnDefinitions="*,*,*">
+        <Border Background="#4FC3F7" CornerRadius="8" Padding="10" Margin="5">
+          <StackPanel>
+            <TextBlock Text="Offline-Analysen" Foreground="White" FontWeight="SemiBold"/>
+            <TextBlock Text="{Binding TotalOfflineAnalyses}" FontSize="20" Foreground="White"/>
+          </StackPanel>
+        </Border>
+        <Border Grid.Column="1" Background="#FFB300" CornerRadius="8" Padding="10" Margin="5">
+          <StackPanel>
+            <TextBlock Text="Online-Suchen" Foreground="White" FontWeight="SemiBold"/>
+            <TextBlock Text="{Binding TotalOnlineSearches}" FontSize="20" Foreground="White"/>
+          </StackPanel>
+        </Border>
+        <Border Grid.Column="2" Background="#66BB6A" CornerRadius="8" Padding="10" Margin="5">
+          <StackPanel>
+            <TextBlock Text="Letzte Analyse" Foreground="White" FontWeight="SemiBold"/>
+            <TextBlock Text="{Binding LastAnalysisDate, StringFormat={}{0:dd.MM.yyyy HH:mm}}"
+                       FontSize="16" Foreground="White"/>
+          </StackPanel>
+        </Border>
+      </Grid>
+      
+      <oxy:PlotView
+        Model="{Binding PieChartModel}"
+        Height="200"
+        Margin="0,10,0,0"/>
+
+      <!-- zwei Listen nebeneinander -->
+      <Grid ColumnDefinitions="1*,1*" RowDefinitions="Auto,Auto">
+        <!-- Überschriften -->
+        <TextBlock Grid.Column="0"
+                   Text="Letzte Offline-Analysen"
+                   FontSize="18" FontWeight="SemiBold" Foreground="White"/>
+        <TextBlock Grid.Column="1"
+                   Text="Letzte Online-Suchen"
+                   FontSize="18" FontWeight="SemiBold" Foreground="White"/>
+
+        <!-- Offline-Liste -->
+        <Border Grid.Row="1" Grid.Column="0"
+                Background="#E3F2FD" CornerRadius="4" Margin="0,5,10,0">
+          <ListBox ItemsSource="{Binding RecentOfflineAnalyses}"
+                   MaxHeight="150"
+                   Margin="5">
+            <ListBox.ItemTemplate>
+              <DataTemplate>
+                <TextBlock Text="{Binding}"
+                           TextWrapping="Wrap"/>
+              </DataTemplate>
+            </ListBox.ItemTemplate>
+          </ListBox>
+        </Border>
+
+        <!-- Online-Liste -->
+        <Border Grid.Row="1" Grid.Column="1"
+                Background="#E3F2FD" CornerRadius="4" Margin="10,5,0,0">
+          <ListBox ItemsSource="{Binding RecentOnlineAnalyses}"
+                   MaxHeight="150"
+                   Margin="5">
+            <ListBox.ItemTemplate>
+              <DataTemplate>
+                <TextBlock Text="{Binding}"
+                           TextWrapping="Wrap"/>
+              </DataTemplate>
+            </ListBox.ItemTemplate>
+          </ListBox>
+        </Border>
+
+      </Grid>
+
+      <!-- Schnellzugriff-Buttons -->
+      <StackPanel Orientation="Horizontal" Spacing="10">
+        <Button Content="Offline-Suche starten"
+                Command="{Binding NavigateOfflineSearchCommand}"
+                Background="#4FC3F7"
+                Foreground="Black"
+                Padding="10,5"/>
+        <Button Content="Online-Suche starten"
+                Command="{Binding NavigateOnlineSearchCommand}"
+                Background="#FFB300"
+                Foreground="Black"
+                Padding="10,5"/>
+      </StackPanel>
+
+    </StackPanel>
+  </Border>
+</UserControl>
