@@ -6,13 +6,15 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using OxyPlot;
+using OxyPlot.Series;
 using Wikalyzer.Services;
+using System.Collections.Generic;
 
 namespace Wikalyzer.ViewModels
 {
     public partial class HomePageViewModel : ViewModelBase
     {
-        // Singleton-Service
         private readonly HistoryService _history = HistoryService.Instance;
 
         // ─── Kennzahlen (KPIs) ───
@@ -32,31 +34,75 @@ namespace Wikalyzer.ViewModels
         [ObservableProperty]
         private ObservableCollection<string> _recentOnlineAnalyses = new();
 
+        // ─── Pie-Chart Model ───
+        [ObservableProperty]
+        private PlotModel _pieChartModel = new PlotModel();
+
         public HomePageViewModel()
         {
-            // Initial­befüllung aus dem HistoryService
-            TotalOfflineAnalyses  = _history.OfflineHistory.Count;
-            TotalOnlineSearches   = _history.OnlineHistory.Count;
-            LastAnalysisDate      = DateTime.Now;
+            // 1) KPI‑Werte & Listen initial laden
+            UpdateKPIs();
+            LoadHistoryEntries();
 
-            foreach (var off in _history.OfflineHistory)
-                RecentOfflineAnalyses.Add(off);
+            // 2) Chart initial bauen
+            UpdateChart();
 
-            foreach (var on in _history.OnlineHistory)
-                RecentOnlineAnalyses.Add($"Online: {on}");
+            // 3) Live‑Updates abonnieren
+            _history.OfflineAdded += OnOfflineAdded;
+            _history.OnlineAdded  += OnOnlineAdded;
+        }
 
-            // Live‑Updates abonnieren
-            _history.OfflineAdded += summary =>
+        private void UpdateKPIs()
+        {
+            TotalOfflineAnalyses = _history.OfflineHistory.Count;
+            TotalOnlineSearches  = _history.OnlineHistory.Count;
+            LastAnalysisDate     = DateTime.Now;
+        }
+
+        private void LoadHistoryEntries()
+        {
+            foreach (var entry in _history.OfflineHistory)
+                RecentOfflineAnalyses.Add(entry);
+
+            foreach (var query in _history.OnlineHistory)
+                RecentOnlineAnalyses.Add($"Online: {query}");
+        }
+
+        private void UpdateChart()
+        {
+            PieChartModel = BuildPieModel();
+        }
+
+        private PlotModel BuildPieModel()
+        {
+            var model = new PlotModel { Title = "Suche‑Verhältnis" };
+            var pie = new PieSeries
             {
-                TotalOfflineAnalyses = _history.OfflineHistory.Count;
-                LastAnalysisDate     = DateTime.Now;
-                RecentOfflineAnalyses.Insert(0, summary);
+                StrokeThickness     = 0.25,
+                InsideLabelPosition = 0.8,
+                AngleSpan           = 360,
+                StartAngle          = 0
             };
-            _history.OnlineAdded += query =>
-            {
-                TotalOnlineSearches  = _history.OnlineHistory.Count;
-                RecentOnlineAnalyses.Insert(0, $"Online: {query}");
-            };
+
+            pie.Slices.Add(new PieSlice("Offline", TotalOfflineAnalyses));
+            pie.Slices.Add(new PieSlice("Online",  TotalOnlineSearches));
+            model.Series.Add(pie);
+
+            return model;
+        }
+
+        private void OnOfflineAdded(string summary)
+        {
+            RecentOfflineAnalyses.Insert(0, summary);
+            UpdateKPIs();
+            UpdateChart();
+        }
+
+        private void OnOnlineAdded(string query)
+        {
+            RecentOnlineAnalyses.Insert(0, $"Online: {query}");
+            UpdateKPIs();
+            UpdateChart();
         }
 
         // ─── Schnellzugriffe / Navigation ───
@@ -64,7 +110,8 @@ namespace Wikalyzer.ViewModels
         [RelayCommand]
         private void NavigateOfflineSearch()
         {
-            if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop &&
+            if (Application.Current?.ApplicationLifetime
+                is IClassicDesktopStyleApplicationLifetime desktop &&
                 desktop.MainWindow?.DataContext is MainWindowViewModel mw)
             {
                 mw.SelectedListItem = mw.Items
@@ -75,7 +122,8 @@ namespace Wikalyzer.ViewModels
         [RelayCommand]
         private void NavigateOnlineSearch()
         {
-            if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop &&
+            if (Application.Current?.ApplicationLifetime
+                is IClassicDesktopStyleApplicationLifetime desktop &&
                 desktop.MainWindow?.DataContext is MainWindowViewModel mw)
             {
                 mw.SelectedListItem = mw.Items

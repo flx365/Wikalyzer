@@ -28,6 +28,10 @@
             <PackageReference Include="HtmlAgilityPack" Version="1.12.2" />
             <PackageReference Include="Markdig" Version="0.41.3" />
         <PackageReference Include="System.Text.Json" Version="9.0.7" />
+            <!-- OxyPlot Core -->
+            <PackageReference Include="OxyPlot.Core" Version="2.2.0" />
+            <!-- Avalonia 11 Preview -->
+            <PackageReference Include="OxyPlot.Avalonia" Version="2.1.0-Avalonia11" />
         </ItemGroup>
 
 </Project>

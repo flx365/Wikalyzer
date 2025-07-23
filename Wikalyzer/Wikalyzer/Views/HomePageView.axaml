@@ -5,6 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="clr-namespace:Wikalyzer.ViewModels"
+    xmlns:oxy="clr-namespace:OxyPlot.Avalonia;assembly=OxyPlot.Avalonia"
     mc:Ignorable="d"
     d:DesignWidth="800" d:DesignHeight="600"
     x:Class="Wikalyzer.Views.HomePageView"
@@ -46,6 +47,11 @@
           </StackPanel>
         </Border>
       </Grid>
+      
+      <oxy:PlotView
+        Model="{Binding PieChartModel}"
+        Height="200"
+        Margin="0,10,0,0"/>
 
       <!-- zwei Listen nebeneinander -->
       <Grid ColumnDefinitions="1*,1*" RowDefinitions="Auto,Auto">
