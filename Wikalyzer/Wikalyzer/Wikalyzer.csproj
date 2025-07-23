@@ -1,4 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+    
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
         <TargetFramework>net8.0</TargetFramework>
@@ -6,6 +7,7 @@
         <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
         <ApplicationManifest>app.manifest</ApplicationManifest>
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+        <UseWebView2>true</UseWebView2>
     </PropertyGroup>
 
     <ItemGroup>
@@ -22,7 +24,7 @@
             <IncludeAssets Condition="'$(Configuration)' != 'Debug'">None</IncludeAssets>
             <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
         </PackageReference>
-        <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.1" />
+            <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
         <PackageReference Include="System.Text.Json" Version="9.0.7" />
         </ItemGroup>
 

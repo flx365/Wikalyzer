@@ -1,5 +1,8 @@
+// Views/OnlineSearchView.axaml.cs
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
+using Avalonia.Interactivity;
+using Wikalyzer.Models;
+using System;
 
 namespace Wikalyzer.Views;
 
@@ -10,8 +13,13 @@ public partial class OnlineSearchView : UserControl
         InitializeComponent();
     }
 
-    private void InitializeComponent()
+    private void OnResultDoubleTapped(object? sender, RoutedEventArgs e)
     {
-        AvaloniaXamlLoader.Load(this);
+        if (sender is ListBox lb && lb.SelectedItem is ArticleSearchResult article)
+        {
+            var url = $"https://de.wikipedia.org/wiki/{Uri.EscapeDataString(article.Title)}";
+            var window = new ArticleViewWindow(article.Title, url, article.Summary);
+            window.Show();
+        }
     }
 }

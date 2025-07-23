@@ -53,7 +53,9 @@
       <ListBox ItemsSource="{Binding SearchResults}"
                Background="#263B50"
                BorderBrush="Transparent"
-               MaxHeight="400">
+               MaxHeight="400"
+               DoubleTapped="OnResultDoubleTapped">
+
         <ListBox.ItemTemplate>
           <DataTemplate DataType="models:ArticleSearchResult">
             <Border Background="#2E4050"
