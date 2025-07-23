@@ -1,4 +1,4 @@
-using Avalonia;
+// Views/HomePageView.axaml.cs
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
@@ -9,5 +9,10 @@ public partial class HomePageView : UserControl
     public HomePageView()
     {
         InitializeComponent();
+    }
+
+    private void InitializeComponent()
+    {
+        AvaloniaXamlLoader.Load(this);
     }
 }
