@@ -18,12 +18,14 @@ public partial class OnlineSearchViewModel : ViewModelBase
         _wiki = new WikiRestClient(WikiLanguage.De);
         Filters = new ObservableCollection<NamespaceFilter>
         {
-            new() { Name="Artikel",    Id=0 },
-            new() { Name="Benutzer",   Id=2 },
-            new() { Name="Datei/Bild", Id=6 },
-            new() { Name="Alle",       Id=-1 }
+            new() { Name = "Artikel",    Id = 0,  Description = "Nur Wikipedia-Artikel durchsuchen" },
+            new() { Name = "Benutzer",   Id = 2,  Description = "Benutzerseiten auf Wikipedia durchsuchen" },
+            new() { Name = "Datei/Bild", Id = 6,  Description = "Dateien und Bilder aus Wikimedia Commons durchsuchen" },
+            new() { Name = "Alle",       Id = -1, Description = "Alle verfügbaren Namensräume einbeziehen" }
         };
+
         SelectedFilter = Filters.First();
+        
     }
 
     [ObservableProperty] private string? _searchTerm;
@@ -48,4 +50,5 @@ public partial class OnlineSearchViewModel : ViewModelBase
 
         IsSearching = false;
     }
+    
 }

@@ -3,38 +3,77 @@
              xmlns:vm="clr-namespace:Wikalyzer.ViewModels"
              xmlns:models="clr-namespace:Wikalyzer.Models"
              xmlns:converters="clr-namespace:Wikalyzer.Converters"
+             xmlns:ia="using:Avalonia.Input"
              x:Class="Wikalyzer.Views.OnlineSearchView"
              x:DataType="vm:OnlineSearchViewModel"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d">
+
   <Border Background="#1A2D3A" Padding="20">
-    <StackPanel Spacing="10">
-      <TextBlock Text="Online-Suche"
+    <Grid RowDefinitions="Auto,Auto,*" RowSpacing="10">
+
+      <!-- Überschrift -->
+      <TextBlock Grid.Row="0"
+                 Text="Online-Suche"
                  FontSize="24" FontWeight="Bold"
                  Foreground="White"
                  HorizontalAlignment="Center"/>
 
-      <StackPanel Orientation="Horizontal" Spacing="8">
-        <ComboBox ItemsSource="{Binding Filters}"
+      <!-- Suchzeile -->
+      <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="8">
+        <ComboBox Width="140"
+                  ItemsSource="{Binding Filters}"
                   SelectedItem="{Binding SelectedFilter}"
-                  Width="120"
                   Background="#263B50"
                   Foreground="White"
-                  BorderBrush="#4FC3F7">
+                  BorderBrush="#4FC3F7"
+                  HorizontalContentAlignment="Center"
+                  VerticalContentAlignment="Center">
+
+          <ComboBox.Resources>
+            <SolidColorBrush x:Key="ThemeBackgroundBrush" Color="#263B50"/>
+            <SolidColorBrush x:Key="ComboBoxPopupBackground" Color="#263B50"/>
+            <SolidColorBrush x:Key="ComboBoxBackground" Color="#263B50"/>
+            <SolidColorBrush x:Key="ComboBoxItemBackground" Color="#263B50"/>
+            <SolidColorBrush x:Key="ComboBoxItemPointerOverBackground" Color="#2F4A60"/>
+            <SolidColorBrush x:Key="ComboBoxItemSelectedBackground" Color="#4FC3F7"/>
+            <SolidColorBrush x:Key="ComboBoxItemSelectedForeground" Color="Black"/>
+            <SolidColorBrush x:Key="ComboBoxItemPointerOverForeground" Color="White"/>
+          </ComboBox.Resources>
+
           <ComboBox.ItemTemplate>
-            <DataTemplate DataType="models:NamespaceFilter">
-              <TextBlock Text="{Binding Name}" Foreground="White"/>
+            <DataTemplate>
+              <TextBlock Text="{Binding Name}"
+                         ToolTip.Tip="{Binding Description}"
+                         Padding="6,4"
+                         Background="Transparent"
+                         Foreground="White"/>
             </DataTemplate>
           </ComboBox.ItemTemplate>
         </ComboBox>
 
         <TextBox Width="250"
-                 Watermark="Begriff eingeben…"
                  Text="{Binding SearchTerm, Mode=TwoWay}"
-                 Background="#263B50"
-                 Foreground="White"
-                 BorderBrush="#4FC3F7"/>
+                 Watermark="Begriff eingeben…">
+          <TextBox.Styles>
+            <Style Selector="TextBox">
+              <Setter Property="Background" Value="#1E2D3A"/>
+              <Setter Property="Foreground" Value="White"/>
+              <Setter Property="CaretBrush" Value="White"/>
+              <Setter Property="BorderBrush" Value="#4FC3F7"/>
+              <Setter Property="FontSize" Value="14"/>
+              <Setter Property="Padding" Value="8,4"/>
+              <Style.Resources>
+                <SolidColorBrush x:Key="TextBoxWatermarkForeground" Color="#8899AA"/>
+              </Style.Resources>
+            </Style>
+          </TextBox.Styles>
+              <TextBox.KeyBindings>
+              <ia:KeyBinding Gesture="Enter"
+                             Command="{Binding SearchCommand}" />
+            </TextBox.KeyBindings>
+        </TextBox>
 
         <Button Content="Suchen"
                 Command="{Binding SearchCommand}"
@@ -50,40 +89,43 @@
                      Foreground="#4FC3F7"/>
       </StackPanel>
 
-      <ListBox ItemsSource="{Binding SearchResults}"
-               Background="#263B50"
-               BorderBrush="Transparent"
-               MaxHeight="400">
-        <ListBox.ItemTemplate>
-          <DataTemplate DataType="models:ArticleSearchResult">
-            <Border Background="#2E4050"
-                    CornerRadius="4"
-                    Padding="8"
-                    Margin="0,4,0,0">
-              <StackPanel Orientation="Horizontal" Spacing="10">
-                <Image Width="80" Height="80"
-                       Stretch="UniformToFill"
-                       Source="{Binding ThumbnailUrl,
-                        Converter={StaticResource UrlToBitmapConverter}}"
-                       IsVisible="{Binding ThumbnailUrl,
-                          Converter={StaticResource NullToBooleanConverter}}"/>
-
-                <StackPanel>
-                  <TextBlock Text="{Binding Title}"
-                             FontWeight="SemiBold"
-                             Foreground="White"
-                             FontSize="14"/>
-                  <TextBlock Text="{Binding Summary}"
-                             TextWrapping="Wrap"
-                             Foreground="#DDDDDD"
-                             FontSize="12"
-                             MaxWidth="600"/>
+      <!-- Ergebnisliste -->
+      <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+        <ListBox ItemsSource="{Binding SearchResults}"
+                 Background="#263B50"
+                 BorderBrush="Transparent"
+                 DoubleTapped="OnResultDoubleTapped">
+          <ListBox.ItemTemplate>
+            <DataTemplate DataType="models:ArticleSearchResult">
+              <Border Background="#2E4050"
+                      CornerRadius="4"
+                      Padding="8"
+                      Margin="0,4,0,0">
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                  <Image Width="80" Height="80"
+                         Stretch="UniformToFill"
+                         Source="{Binding ThumbnailUrl,
+                            Converter={StaticResource UrlToBitmapConverter}}"
+                         IsVisible="{Binding ThumbnailUrl,
+                            Converter={StaticResource NullToBooleanConverter}}"/>
+                  <StackPanel>
+                    <TextBlock Text="{Binding Title}"
+                               FontWeight="SemiBold"
+                               Foreground="White"
+                               FontSize="14"/>
+                    <TextBlock Text="{Binding Summary}"
+                               TextWrapping="Wrap"
+                               Foreground="#DDDDDD"
+                               FontSize="12"
+                               MaxWidth="600"/>
+                  </StackPanel>
                 </StackPanel>
-              </StackPanel>
-            </Border>
-          </DataTemplate>
-        </ListBox.ItemTemplate>
-      </ListBox>
-    </StackPanel>
+              </Border>
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
+      </ScrollViewer>
+
+    </Grid>
   </Border>
 </UserControl>
