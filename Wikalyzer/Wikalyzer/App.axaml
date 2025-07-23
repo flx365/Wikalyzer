@@ -1,17 +1,26 @@
-<Application xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             x:Class="Wikalyzer.App"
-             xmlns:local="using:Wikalyzer"
-             RequestedThemeVariant="Light">
-             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
+<Application
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Wikalyzer"
+    xmlns:converters="clr-namespace:Wikalyzer.Converters"
+    x:Class="Wikalyzer.App"
+    RequestedThemeVariant="Light">
+
 
     <Application.DataTemplates>
         <local:ViewLocator/>
     </Application.DataTemplates>
+    
+    <Application.Resources>
+        <!-- Konverter -->
+        <converters:NullToBooleanConverter x:Key="NullToBooleanConverter"/>
+        <converters:UrlToBitmapConverter   x:Key="UrlToBitmapConverter"/>
+    </Application.Resources>
 
-  
+
     <Application.Styles>
-        <FluentTheme />
-        <StyleInclude Source="avares://Wikalyzer/Assets/Icons.axaml"></StyleInclude>
+        <FluentTheme/>
+        <StyleInclude Source="avares://Wikalyzer/Assets/Icons.axaml"/>
     </Application.Styles>
+
 </Application>

@@ -1,59 +1,89 @@
-<UserControl
-    xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:vm="using:Wikalyzer.ViewModels"
-    x:Class="Wikalyzer.Views.OnlineSearchView"
-    x:DataType="vm:OnlineSearchViewModel">
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:Wikalyzer.ViewModels"
+             xmlns:models="clr-namespace:Wikalyzer.Models"
+             xmlns:converters="clr-namespace:Wikalyzer.Converters"
+             x:Class="Wikalyzer.Views.OnlineSearchView"
+             x:DataType="vm:OnlineSearchViewModel"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d">
+  <Border Background="#1A2D3A" Padding="20">
+    <StackPanel Spacing="10">
+      <TextBlock Text="Online-Suche"
+                 FontSize="24" FontWeight="Bold"
+                 Foreground="White"
+                 HorizontalAlignment="Center"/>
 
-    <!-- Hintergrund -->
-    <Border Background="#1A2D3A" Padding="30">
+      <StackPanel Orientation="Horizontal" Spacing="8">
+        <ComboBox ItemsSource="{Binding Filters}"
+                  SelectedItem="{Binding SelectedFilter}"
+                  Width="120"
+                  Background="#263B50"
+                  Foreground="White"
+                  BorderBrush="#4FC3F7">
+          <ComboBox.ItemTemplate>
+            <DataTemplate DataType="models:NamespaceFilter">
+              <TextBlock Text="{Binding Name}" Foreground="White"/>
+            </DataTemplate>
+          </ComboBox.ItemTemplate>
+        </ComboBox>
 
-        <!-- Inhalt -->
-        <StackPanel Spacing="15">
-            
-            <!-- Titel -->
-            <TextBlock 
-                Text="Online-Suche"
-                FontSize="24"
-                FontWeight="Bold"
-                Foreground="White"
-                HorizontalAlignment="Center" />
+        <TextBox Width="250"
+                 Watermark="Begriff eingeben…"
+                 Text="{Binding SearchTerm, Mode=TwoWay}"
+                 Background="#263B50"
+                 Foreground="White"
+                 BorderBrush="#4FC3F7"/>
 
-            <!-- Suchfeld -->
-            <TextBox 
-                Watermark="Begriff eingeben..."
-                Text="{Binding SearchTerm, Mode=TwoWay}" 
-                Background="#263B50"
-                Foreground="White"
-                BorderBrush="#4FC3F7"
-                FontSize="14" />
-
-            <!-- Such-Button -->
-            <Button 
-                Content="Suchen"
-                Command="{Binding SearchCommand}" 
+        <Button Content="Suchen"
+                Command="{Binding SearchCommand}"
                 Background="#4FC3F7"
                 Foreground="Black"
-                FontWeight="Bold"
-                FontSize="14" />
+                Padding="10,5"/>
 
-            <!-- Ergebnisse -->
-            <ListBox 
-                ItemsSource="{Binding SearchResults}" 
-                Background="#263B50"
-                Foreground="White"
-                BorderBrush="Transparent"
-                Height="200" />
+        <ProgressBar Width="60"
+                     IsVisible="{Binding IsSearching}"
+                     IsIndeterminate="True"
+                     Height="4"
+                     VerticalAlignment="Bottom"
+                     Foreground="#4FC3F7"/>
+      </StackPanel>
 
-            <!-- Ladeanzeige -->
-            <TextBlock 
-                Text="🔍 Suche läuft..."
-                Foreground="#AAAAAA"
-                HorizontalAlignment="Center"
-                IsVisible="{Binding IsSearching}" />
-        </StackPanel>
-    </Border>
+      <ListBox ItemsSource="{Binding SearchResults}"
+               Background="#263B50"
+               BorderBrush="Transparent"
+               MaxHeight="400">
+        <ListBox.ItemTemplate>
+          <DataTemplate DataType="models:ArticleSearchResult">
+            <Border Background="#2E4050"
+                    CornerRadius="4"
+                    Padding="8"
+                    Margin="0,4,0,0">
+              <StackPanel Orientation="Horizontal" Spacing="10">
+                <Image Width="80" Height="80"
+                       Stretch="UniformToFill"
+                       Source="{Binding ThumbnailUrl,
+                        Converter={StaticResource UrlToBitmapConverter}}"
+                       IsVisible="{Binding ThumbnailUrl,
+                          Converter={StaticResource NullToBooleanConverter}}"/>
+
+                <StackPanel>
+                  <TextBlock Text="{Binding Title}"
+                             FontWeight="SemiBold"
+                             Foreground="White"
+                             FontSize="14"/>
+                  <TextBlock Text="{Binding Summary}"
+                             TextWrapping="Wrap"
+                             Foreground="#DDDDDD"
+                             FontSize="12"
+                             MaxWidth="600"/>
+                </StackPanel>
+              </StackPanel>
+            </Border>
+          </DataTemplate>
+        </ListBox.ItemTemplate>
+      </ListBox>
+    </StackPanel>
+  </Border>
 </UserControl>
-
-
-

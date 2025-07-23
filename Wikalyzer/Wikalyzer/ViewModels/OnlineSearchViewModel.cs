@@ -1,49 +1,50 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
+﻿// ViewModels/OnlineSearchViewModel.cs
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using Wikalyzer.Models;
+using Wikalyzer.Services;
 
 namespace Wikalyzer.ViewModels;
 
-/// <summary>
-/// ViewModel für die Online-Suchseite.
-/// Enthält Suchlogik und Datenbindung für die Online-Suche.
-/// </summary>
 public partial class OnlineSearchViewModel : ViewModelBase
 {
-    // ───────── Eingabe für Suchbegriff ─────────
+    private readonly WikiRestClient _wiki;
 
-    [ObservableProperty]
-    private string? _searchTerm; // Bindet sich an die Eingabe in der UI
+    public OnlineSearchViewModel()
+    {
+        _wiki = new WikiRestClient(WikiLanguage.De);
+        Filters = new ObservableCollection<NamespaceFilter>
+        {
+            new() { Name="Artikel",    Id=0 },
+            new() { Name="Benutzer",   Id=2 },
+            new() { Name="Datei/Bild", Id=6 },
+            new() { Name="Alle",       Id=-1 }
+        };
+        SelectedFilter = Filters.First();
+    }
 
-    // ───────── Suchergebnisse (z. B. ListBox) ─────────
+    [ObservableProperty] private string? _searchTerm;
+    [ObservableProperty] private ObservableCollection<ArticleSearchResult> _searchResults 
+        = new();
+    [ObservableProperty] private bool _isSearching;
+    public ObservableCollection<NamespaceFilter> Filters { get; }
+    [ObservableProperty] private NamespaceFilter _selectedFilter;
 
-    [ObservableProperty]
-    private ObservableCollection<string> _searchResults = new();
-
-    // ───────── Statusanzeige für Ladeanimation ─────────
-
-    [ObservableProperty]
-    private bool _isSearching; // Wird true während der Suche
-
-    /// <summary>
-    /// Simuliert eine Online-Suche. Ersetzt später API-Call.
-    /// </summary>
     [RelayCommand]
     private async Task SearchAsync()
     {
-        if (string.IsNullOrWhiteSpace(SearchTerm))
-            return;
+        if (string.IsNullOrWhiteSpace(SearchTerm)) return;
 
-        IsSearching = true;
+        IsSearching     = true;
         SearchResults.Clear();
 
-        await Task.Delay(1000); // Simuliertes Warten auf API-Ergebnis
-
-        // Platzhalter-Ergebnisse
-        SearchResults.Add($"Ergebnis 1 für '{SearchTerm}'");
-        SearchResults.Add($"Ergebnis 2 für '{SearchTerm}'");
-        SearchResults.Add($"Ergebnis 3 für '{SearchTerm}'");
+        var items = await _wiki.SearchWithThumbnailsAsync(
+            SearchTerm!, SelectedFilter.Id, limit:10, thumbSize:150);
+        foreach (var it in items)
+            SearchResults.Add(it);
 
         IsSearching = false;
     }
