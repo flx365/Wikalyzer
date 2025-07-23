@@ -1,8 +1,68 @@
-<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="Wikalyzer.Views.HomePageView">
-    Welcome to Avalonia!
+<!-- Views/HomePageView.axaml -->
+<UserControl
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:vm="clr-namespace:Wikalyzer.ViewModels"
+    x:Class="Wikalyzer.Views.HomePageView"
+    x:DataType="vm:HomePageViewModel">
+
+  <!-- Außenabstand -->
+  <Border Padding="20">
+    <StackPanel Spacing="20">
+
+      <!-- Titel -->
+      <TextBlock Text="Dashboard"
+                 FontSize="24"
+                 FontWeight="Bold"/>
+
+      <!-- KPI-Cards -->
+      <Grid ColumnDefinitions="*,*,*">
+        <!-- Offline-Analysen -->
+        <Border Background="#4FC3F7" CornerRadius="8" Padding="10" Margin="5">
+          <StackPanel>
+            <TextBlock Text="Offline-Analysen" FontWeight="SemiBold" Foreground="White"/>
+            <TextBlock Text="{Binding TotalOfflineAnalyses}" FontSize="20" Foreground="White"/>
+          </StackPanel>
+        </Border>
+        <!-- Online-Suchen -->
+        <Border Grid.Column="1" Background="#FFB300" CornerRadius="8" Padding="10" Margin="5">
+          <StackPanel>
+            <TextBlock Text="Online-Suchen" FontWeight="SemiBold" Foreground="White"/>
+            <TextBlock Text="{Binding TotalOnlineSearches}" FontSize="20" Foreground="White"/>
+          </StackPanel>
+        </Border>
+        <!-- Letzte Analyse -->
+        <Border Grid.Column="2" Background="#66BB6A" CornerRadius="8" Padding="10" Margin="5">
+          <StackPanel>
+            <TextBlock Text="Letzte Analyse" FontWeight="SemiBold" Foreground="White"/>
+            <TextBlock Text="{Binding LastAnalysisDate, StringFormat={}{0:dd.MM.yyyy HH:mm}}"
+                       FontSize="16" Foreground="White"/>
+          </StackPanel>
+        </Border>
+      </Grid>
+
+      <!-- Letzte Analysen -->
+      <StackPanel>
+        <TextBlock Text="Letzte Analysen" FontSize="18" FontWeight="SemiBold"/>
+        <ListBox ItemsSource="{Binding RecentAnalyses}"
+                 MaxHeight="150"
+                 Margin="0,5,0,0"/>
+      </StackPanel>
+
+      <!-- Schnellzugriffe -->
+      <StackPanel Orientation="Horizontal" Spacing="10">
+        <Button Content="Offline-Suche starten"
+                Command="{Binding NavigateOfflineSearchCommand}"
+                Background="#4FC3F7"
+                Foreground="Black"
+                Padding="10,5"/>
+        <Button Content="Online-Suche starten"
+                Command="{Binding NavigateOnlineSearchCommand}"
+                Background="#FFB300"
+                Foreground="Black"
+                Padding="10,5"/>
+      </StackPanel>
+
+    </StackPanel>
+  </Border>
 </UserControl>
