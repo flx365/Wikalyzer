@@ -1,4 +1,3 @@
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
@@ -9,5 +8,10 @@ public partial class OnlineSearchView : UserControl
     public OnlineSearchView()
     {
         InitializeComponent();
+    }
+
+    private void InitializeComponent()
+    {
+        AvaloniaXamlLoader.Load(this);
     }
 }
