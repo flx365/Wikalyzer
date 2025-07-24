@@ -2,7 +2,7 @@ namespace Wikalyzer.Models
 {
     /// <summary>
     /// Ergebnis einer einzelnen Suchseite:
-    /// Titel, kurzer Extract und URL zum Thumbnail.
+    /// Titel, kurzer Extract URL zum Thumbnail und PageUrl.
     /// </summary>
     public class ArticleSearchResult
     {

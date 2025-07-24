@@ -28,12 +28,12 @@ public partial class OfflineSearchViewModel : ViewModelBase
         var result = await Task.Run(() => _analyzer.Analyze(InputText ?? string.Empty));
         await Dispatcher.UIThread.InvokeAsync(() => Stats = result);
 
-        // Mini‑Summary: ersten 50 Zeichen des InputText
+        // Kurze Zusammenfassung: ersten 50 Zeichen des eingegebenen Textes
         string snippet = InputText?.Trim() ?? "";
         if (snippet.Length > 50)
             snippet = snippet.Substring(0, 50).TrimEnd() + "...";
 
-        // Verlaufseintrag: erst Statistik, dann Newline + Snippet
+        // Verlaufseintrag: Wortzahl + Textausschnitt
         var historyText = $"Offline: {Stats.WordCount} Wörter\n{snippet}";
         _history.AddOfflineAnalysis(historyText);
 

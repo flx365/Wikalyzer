@@ -4,38 +4,39 @@ using System.Net.Http;
 using Avalonia.Data.Converters;
 using Avalonia.Media.Imaging;
 
-namespace Wikalyzer.Converters;
-
-/// <summary>
-/// Lädt eine HTTP/HTTPS-URL herunter und liefert eine <see cref="Bitmap"/>
-/// für <c>Image.Source</c>.  Bei Fehlern → <c>null</c>.
-/// </summary>
-public class UrlToBitmapConverter : IValueConverter
+namespace Wikalyzer.Converters
 {
-    // global geteilter HttpClient
-    private static readonly HttpClient Http = new();
-
-    public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    /// <summary>
+    /// Lädt ein Bild von einer HTTP/HTTPS-URL herunter und gibt eine Bitmap zurück,
+    /// die direkt als Image.Source verwendet werden kann. Bei Problemen wird einfach null zurückgegeben.
+    /// </summary>
+    public class UrlToBitmapConverter : IValueConverter
     {
-        if (value is not string url || string.IsNullOrWhiteSpace(url))
-            return null;
+        // Ein einziger HttpClient für alle Aufrufe
+        private static readonly HttpClient HttpClient = new();
 
-        try
+        public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
-            // Download synchron (kleine Thumbnails → OK)
-            var stream = Http.GetStreamAsync(url)
-                .GetAwaiter()
-                .GetResult();
+            if (value is not string url || string.IsNullOrWhiteSpace(url))
+                return null; // keine gültige URL, also kein Bild
 
-            return new Bitmap(stream);
+            try
+            {
+                // Lade das Bild-Stream synchron – Thumbnails sind klein, daher in Ordnung
+                using var stream = HttpClient.GetStreamAsync(url).GetAwaiter().GetResult();
+                return new Bitmap(stream);
+            }
+            catch
+            {
+                // Falls etwas schiefgeht (Netzwerk, ungültiges Format etc.),
+                // einfach null zurückgeben und weiterlaufen
+                return null;
+            }
         }
-        catch
+
+        public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
-            // Bild konnte nicht geladen werden → kein Crash, kein Binding-Fehler
-            return null;
+            throw new NotSupportedException("Rückwärtskonvertierung wird nicht unterstützt.");
         }
     }
-
-    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
-        => throw new NotSupportedException();
 }

@@ -1,5 +1,5 @@
 ﻿// ViewModels/OnlineSearchViewModel.cs
-using System;
+
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,7 +11,7 @@ using Wikalyzer.Services;
 namespace Wikalyzer.ViewModels;
 
 /// <summary>
-/// ViewModel für die Onlinesuche mit Mini‑Summary im Verlauf.
+/// Steuert die Online-Suche und legt Suchergebnisse im Verlauf ab
 /// </summary>
 public partial class OnlineSearchViewModel : ViewModelBase
 {
@@ -21,7 +21,8 @@ public partial class OnlineSearchViewModel : ViewModelBase
     public OnlineSearchViewModel()
     {
         _wiki = new WikiRestClient(WikiLanguage.De);
-
+        
+        // Verfügbare Namensraum-Filter initialisieren
         Filters = new ObservableCollection<NamespaceFilter>
         {
             new() { Name = "Artikel",    Id = 0 },
@@ -40,7 +41,7 @@ public partial class OnlineSearchViewModel : ViewModelBase
 
     [ObservableProperty] private NamespaceFilter _selectedFilter;
 
-    // ViewModels/OnlineSearchViewModel.cs
+
     [RelayCommand]
     private async Task SearchAsync()
     {
@@ -49,18 +50,21 @@ public partial class OnlineSearchViewModel : ViewModelBase
 
         IsSearching = true;
         SearchResults.Clear();
-
+        
+        // Anfrage an die Wikipedia Action API
         var items = await _wiki.SearchWithThumbnailsAsync(SearchTerm!, SelectedFilter.Id, limit:10, thumbSize:150);
+        
+        // Ergebnisse in die Sammlung übernehmen
         foreach (var it in items)
             SearchResults.Add(it);
         IsSearching = false;
 
-        // Mini‑Summary: erstes Summary‑Snippet
+        // Ersten Teil der Zusammenfassung als Verlaufseintrag verwenden 
         var snippet = items.FirstOrDefault()?.Summary ?? "";
         if (snippet.Length > 50)
             snippet = snippet.Substring(0, 50).TrimEnd() + "...";
 
-        // Verlaufseintrag: erst Suchbegriff, dann Newline + Snippet
+       
         var historyText = $"Online: {SearchTerm}\n{snippet}";
         _history.AddOnlineSearch(historyText);
     }

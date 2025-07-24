@@ -11,9 +11,8 @@
 
   <Border Padding="20" Background="#1A2D3A">
     <Grid ColumnDefinitions="3*,2*" RowDefinitions="Auto" ColumnSpacing="20">
-
-
-    <!-- Linke Spalte: Text + Analyse -->
+      
+    <!-- Linke Spalte: Text + Analyse-Button -->
     <StackPanel Grid.Column="0" Spacing="12">
 
       <TextBlock Text="Wikipedia-Text eingeben:"
@@ -56,9 +55,7 @@
           </Style>
         </Button.Styles>
       </Button>
-
-
-
+      
       <StackPanel Spacing="4">
         <ProgressBar IsVisible="{Binding IsAnalyzing}"
                      IsIndeterminate="True"
@@ -70,7 +67,6 @@
                    Foreground="#0066CC"
                    HorizontalAlignment="Center"/>
       </StackPanel>
-
     </StackPanel>
 
     <!-- Rechte Spalte: Ergebnisse -->
@@ -190,11 +186,8 @@
               </DataTemplate>
             </ItemsControl.ItemTemplate>
           </ItemsControl>
-
         </StackPanel>
       </ScrollViewer>
-
     </Border>
-
   </Grid></Border>
 </UserControl>

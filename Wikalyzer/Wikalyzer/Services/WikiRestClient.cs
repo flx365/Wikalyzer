@@ -15,15 +15,16 @@ using Markdig;
 namespace Wikalyzer.Services
 {
     /// <summary>
-    /// MediaWiki-Client auf Basis der Action-API  
-    /// (action=query&generator=search)  
-    /// • liefert Extract + Thumbnail (pageimages) für Artikel  
-    /// • liefert Original-Bild (imageinfo) für Dateiseiten  
-    /// • bewahrt die API-Suchreihenfolge (Feld <c>index</c>)  
-    /// Zusätzlich:
-    /// • GetArticleHtmlAsync holt den reinen HTML-Artikel  
-    /// • GetArticlePlainTextAsync wandelt HTML per Regex in formatierten Text um
+    /// Einfacher Client für die MediaWiki Action API:
+    /// - Sucht Artikel (action=query + generator=search) und liefert Titel, Kurztext und Vorschaubild (pageimages).
+    /// - Holt für Dateiseiten das Originalbild (imageinfo).
+    /// - Behält dabei die Reihenfolge der Suchergebnisse (Feld <c>index</c>) bei.
+    ///
+    /// Zusätzlich bietet er zwei Hilfsmethoden:
+    /// <c>GetArticleHtmlAsync</c> lädt den reinen HTML-Inhalt eines Artikels,
+    /// <c>GetArticleMarkdownAsync</c> wandelt diesen HTML-Text in formatiertes Markdown um.
     /// </summary>
+
     public class WikiRestClient
     {
         private readonly HttpClient _http;
@@ -186,7 +187,7 @@ namespace Wikalyzer.Services
                     continue;
                 }
 
-                // == Formatierungen ==
+                // Formatierungen 
                 // Fett (Überschriften als Markdown-Fett → fett + unterstrichen)
                 if (line.StartsWith("**") && line.EndsWith("**"))
                 {
@@ -298,40 +299,5 @@ namespace Wikalyzer.Services
 
             return sb.ToString();
         }
-
-        private static string ProcessInlineNodes(HtmlNode node)
-        {
-            var sb = new StringBuilder();
-
-            foreach (var child in node.ChildNodes)
-            {
-                if (child.NodeType == HtmlNodeType.Text)
-                {
-                    sb.Append(HtmlEntity.DeEntitize(child.InnerText));
-                }
-                else if (child.Name is "b" or "strong")
-                {
-                    sb.Append("**").Append(ProcessInlineNodes(child)).Append("**");
-                }
-                else if (child.Name is "i" or "em")
-                {
-                    sb.Append("_").Append(ProcessInlineNodes(child)).Append("_");
-                }
-                else if (child.Name == "a")
-                {
-                    // LINKTEXT JA, aber URL NEIN – also nur den Textinhalt übernehmen
-                    var text = ProcessInlineNodes(child).Trim();
-                    if (!string.IsNullOrEmpty(text))
-                        sb.Append(text);
-                }
-                else
-                {
-                    sb.Append(ProcessInlineNodes(child));
-                }
-            }
-
-            return sb.ToString();
-        }
-
     }
 }
