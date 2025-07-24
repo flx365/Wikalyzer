@@ -9,7 +9,6 @@ using CommunityToolkit.Mvvm.Input;
 using OxyPlot;
 using OxyPlot.Series;
 using Wikalyzer.Services;
-using System.Collections.Generic;
 
 namespace Wikalyzer.ViewModels
 {
@@ -17,7 +16,7 @@ namespace Wikalyzer.ViewModels
     {
         private readonly HistoryService _history = HistoryService.Instance;
 
-        // ─── Kennzahlen (KPIs) ───
+        // Kennzahlen (KPIs)
         [ObservableProperty]
         private int _totalOfflineAnalyses;
 
@@ -27,14 +26,14 @@ namespace Wikalyzer.ViewModels
         [ObservableProperty]
         private DateTime _lastAnalysisDate;
 
-        // ─── Getrennte Listen für Offline- und Online-History ───
+        // Getrennte Listen für Offline- und Online-History
         [ObservableProperty]
         private ObservableCollection<string> _recentOfflineAnalyses = new();
 
         [ObservableProperty]
         private ObservableCollection<string> _recentOnlineAnalyses = new();
 
-        // ─── Pie-Chart Model ───
+        // Pie-Chart Model 
         [ObservableProperty]
         private PlotModel _pieChartModel = new PlotModel();
 
@@ -44,10 +43,10 @@ namespace Wikalyzer.ViewModels
             UpdateKPIs();
             LoadHistoryEntries();
 
-            // 2) Chart initial bauen
+            // 2) Diagramm mit den geladenen Daten erstellen
             UpdateChart();
 
-            // 3) Live‑Updates abonnieren
+            // 3) Auf neue EInträge im Verlauf reagieren
             _history.OfflineAdded += OnOfflineAdded;
             _history.OnlineAdded  += OnOnlineAdded;
         }
@@ -105,7 +104,7 @@ namespace Wikalyzer.ViewModels
             UpdateChart();
         }
 
-        // ─── Schnellzugriffe / Navigation ───
+        // Schnellzugriffe / Navigation
 
         [RelayCommand]
         private void NavigateOfflineSearch()
