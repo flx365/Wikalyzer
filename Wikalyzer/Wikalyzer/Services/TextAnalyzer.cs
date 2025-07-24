@@ -28,7 +28,7 @@ public class TextAnalyzer
         stats.LongestSentence = sentences.OrderByDescending(s => s.Length).FirstOrDefault() ?? "";
         stats.ShortestSentence = sentences.OrderBy(s => s.Length).FirstOrDefault() ?? "";
 
-        stats.ReadingTimeMinutes = Math.Round(words.Count / 200.0, 2); // 200 WpM
+        stats.ReadingTimeMinutes = Math.Round(words.Count / 200.0, 2); // 200 WpM (Wörter pro Minute)
 
         stats.FleschReadingEase = CalculateFleschEase(words, sentences);
 

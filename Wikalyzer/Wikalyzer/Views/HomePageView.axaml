@@ -10,8 +10,7 @@
     d:DesignWidth="800" d:DesignHeight="600"
     x:Class="Wikalyzer.Views.HomePageView"
     x:DataType="vm:HomePageViewModel">
-
-  <!-- Design‑Datenkontext für die Vorschau im Designer -->
+  
   <Design.DataContext>
     <vm:HomePageViewModel/>
   </Design.DataContext>
@@ -26,7 +25,7 @@
                  FontWeight="Bold"
                  Foreground="White"/>
 
-      <!-- KPI‑Cards -->
+      <!-- KPI‑Felder -->
       <Grid ColumnDefinitions="*,*,*">
         <Border Background="#4FC3F7" CornerRadius="8" Padding="10" Margin="5">
           <StackPanel>
@@ -57,10 +56,10 @@
       <!-- zwei Listen nebeneinander -->
       <Grid ColumnDefinitions="1*,1*" RowDefinitions="Auto,Auto">
         <!-- Überschriften -->
-        <TextBlock Grid.Column="0"
+        <TextBlock Grid.Row="0" Grid.Column="0"
                    Text="Letzte Offline-Analysen"
                    FontSize="18" FontWeight="SemiBold" Foreground="White"/>
-        <TextBlock Grid.Column="1"
+        <TextBlock Grid.Row="0" Grid.Column="1"
                    Text="Letzte Online-Suchen"
                    FontSize="18" FontWeight="SemiBold" Foreground="White"/>
 

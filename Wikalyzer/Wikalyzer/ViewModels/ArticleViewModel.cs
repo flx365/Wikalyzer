@@ -8,7 +8,6 @@ using Avalonia.Media;
 using System.Text.RegularExpressions;
 using Wikalyzer.Services;
 using Avalonia.Controls;
-using Markdig;
 using Avalonia;
 
 namespace Wikalyzer.ViewModels;
@@ -70,7 +69,7 @@ public partial class ArticleViewModel : ViewModelBase
                 continue;
             }
 
-            // === Markdown-Überschriften ===
+            // Markdown-Überschriften
             if (line.StartsWith("### "))
             {
                 blocks.Add(new TextBlock
@@ -96,7 +95,7 @@ public partial class ArticleViewModel : ViewModelBase
                 continue;
             }
 
-            // === Bulletpoints ===
+            // Bulletpoints
             if (line.StartsWith("- "))
             {
                 blocks.Add(new TextBlock
@@ -108,7 +107,7 @@ public partial class ArticleViewModel : ViewModelBase
                 continue;
             }
 
-            // === Absatz (normaler Text) ===
+            // Absatz (normaler Text)
             blocks.Add(new TextBlock
             {
                 Text = StripMarkdown(line),

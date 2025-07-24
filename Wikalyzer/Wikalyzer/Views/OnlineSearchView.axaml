@@ -125,7 +125,6 @@
           </ListBox.ItemTemplate>
         </ListBox>
       </ScrollViewer>
-
     </Grid>
   </Border>
 </UserControl>

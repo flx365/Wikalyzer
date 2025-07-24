@@ -45,7 +45,7 @@ public class HistoryService
 
     public void AddOnlineSearch(string query)
     {
-        _onlineHistory.Insert(0, query);     // ← korrekte Einfügung ganz oben
+        _onlineHistory.Insert(0, query);     // korrekte Einfügung ganz oben
         OnlineAdded?.Invoke(query);
         SaveToDisk();
     }
